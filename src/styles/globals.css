@@ -95,3 +95,69 @@ a {
 .frequency-button:hover {
   background-color: #007bff; /* Example hover color */
 }
+
+.cap-buttons-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px; /* Space between buttons */
+  margin-bottom: 20px;
+}
+
+.cap-filter-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Styling for each category button, adjust colors as needed */
+.filter-degen-cap {
+  background-color: #ff9f9f;
+}
+
+.filter-degen-cap:hover {
+  background-color: #ff7f7f;
+}
+
+.filter-low-cap {
+  background-color: #ffd79f;
+}
+
+.filter-low-cap:hover {
+  background-color: #ffbf7f;
+}
+
+.filter-mid-cap {
+  background-color: #ffff9f;
+}
+
+.filter-mid-cap:hover {
+  background-color: #ffff7f;
+}
+
+.filter-high-cap {
+  background-color: #9fff9f;
+}
+
+.filter-high-cap:hover {
+  background-color: #7fff7f;
+}
+
+.filter-giga-cap {
+  background-color: #9fdfff;
+}
+
+.filter-giga-cap:hover {
+  background-color: #7fbdff;
+}
+
+.cap-filter-button:focus {
+  outline: 2px solid #333; /* For accessibility */
+}
+
+.cap-filter-button:active {
+  transform: scale(0.95);
+}

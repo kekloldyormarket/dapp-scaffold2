@@ -9,12 +9,15 @@ export default function Home() {
 
   return (
     <>
+
       <Head>
         <title>Welcome to Solami: The Frontier of DeFi DCA</title>
         <meta name="description" content="Discover the next leap in DeFi investing with Solami's DCA tool." />
         <link rel="icon" href="/favicon.ico" />
+
+        <div id="integrated-terminal"></div>
       </Head>
-            
+       
             {!wallet.connected ? (
 
       <main className="min-h-screen flex flex-col items-center justify-center text-white bg-gradient-to-r from-blue-500 to-purple-600">

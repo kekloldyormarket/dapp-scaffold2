@@ -19,7 +19,10 @@ import {
   Network,
   WithdrawParams,
 } from '@jup-ag/dca-sdk';
-import { TOKEN_PROGRAM_ID } from '@raydium-io/raydium-sdk';
+import {
+  SPL_MINT_LAYOUT,
+  TOKEN_PROGRAM_ID,
+} from '@raydium-io/raydium-sdk';
 import { NATIVE_MINT } from '@solana/spl-token';
 // Wallet
 import {
@@ -38,8 +41,17 @@ import {
 } from '@solana/web3.js';
 
 import DCAButtons from './buttons';
+import CapFilterButtons from './CapFilterButtons';
 import FrequencyButtons from './FrequencyButtons';
 
+const sampleItems = [
+  { name: 'Item 1', capCategory: 'Degen Cap' },
+  { name: 'Item 2', capCategory: 'Low Cap' },
+  { name: 'Item 3', capCategory: 'Mid Cap' },
+  { name: 'Item 4', capCategory: 'High Cap' },
+  { name: 'Item 5', capCategory: 'Giga Cap' },
+  // Add more items as needed
+];
 const TOKEN_2022_PROGRAM_ID = new PublicKey("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb")
 async function createDCA(user: WalletContextState, dca: DCA, inputAmountPerCycle: number, seconds: number, inputMint: PublicKey, outputMint: PublicKey, cycles: number) {
   const params: CreateDCAParamsV2 = {
@@ -79,6 +91,7 @@ const [val, setVal] = useState(0);
 const [dcaAccounts, setDcaAccounts] = useState<any[]>()
 const [balances, setBalances] = useState<any[]>()
 useEffect(() => {
+  
   const fetchDcaAccounts = async () => {
     
   const dcaAccounts = await dca.getCurrentByUser(wallet.publicKey);
@@ -131,7 +144,12 @@ async function close(dcaPubKeys: PublicKey[]) {
   setLog('Close: ' + txid);
 }
 }
-
+const [cap, setCap] = useState('');
+const handleSetCap = (filter) => {
+  // Logic to handle the filter
+  console.log(filter);
+  setCap(filter);
+}
  // Function to update frequency
  const handleSetFrequency = (seconds) => {
    setFrequency(seconds)
@@ -187,13 +205,98 @@ async function close(dcaPubKeys: PublicKey[]) {
         }
         masterBadKeys.push(key.account.data.parsed.info.mint)
       }
-      const sortedKeys = goodKeys.sort((a, b) => {
+      let sortedKeys = goodKeys.sort((a, b) => {
         return cumulativeVolumes[goodKeys.indexOf(a)] - cumulativeVolumes[goodKeys.indexOf(b)];
       }).filter((key) => !masterBadKeys.includes(key));
       // remove bad keys
+   
+
+        for (const key of badKeys.value){
+          // if uiAmount == 0 
+          if (key.account.data.parsed.info.uiAmount == 0){
+            continue 
+          }
+          masterBadKeys.push(key.account.data.parsed.info.mint)
+        }
+        for (const key of badKeys2.value){
+          // if uiAmount == 0 
+          if (key.account.data.parsed.info.uiAmount == 0){
+            continue 
+          }
+          masterBadKeys.push(key.account.data.parsed.info.mint)
+        }
+        // getAccountInfos for all keys
+        
+        const accountInfos = await connection.getMultipleAccountsInfo(sortedKeys.map((key) => new PublicKey(key)));
+        const decoded = accountInfos.map((accountInfo) => {
+          return accountInfo != null ? accountInfo.data : null;
+        })
+        .map((data) => {
+          return SPL_MINT_LAYOUT.decode(data);
+        })
+        const mCaps = {}
+        for (const key in sortedKeys){
+          console.log(Number(decoded[key].supply))
+          console.log(goodCache[sortedKeys[key]][0].price)
+          console.log(sortedKeys[key])
+          mCaps[sortedKeys[key]] = Number(decoded[key].supply) / Math.pow(10, decoded[key].decimals) * goodCache[sortedKeys[key]][0].price
+        }
+        console.log('mCaps', mCaps) 
+  // Initialize buckets
+  let degenCap = {};
+  let lowCap = {};
+  let midCap = {};
+  let highCap = {};
+  let gigaCap = {};
+  
+  // Iterate through each market cap
+  for (let key in mCaps) {
+      let marketCap = mCaps[key]; // Assuming mCaps[key] holds the market cap value
+  
+      // Categorize based on the market cap
+      if (marketCap < 10000) {
+          degenCap[key] = marketCap;
+      } else if (marketCap < 100000) {
+          lowCap[key] = marketCap;
+      } else if (marketCap < 1000000) {
+          midCap[key] = marketCap;
+      } else if (marketCap < 100000000) {
+          highCap[key] = marketCap;
+      } else if (marketCap < 1000000000) {
+          gigaCap[key] = marketCap;
+      }
+  }
+  
+  // Now degenCap, lowCap, midCap, highCap, and gigaCap contain the categorized market caps
+  
+  console.log('degenCap', degenCap, 'lowCap', lowCap, 'midCap', midCap, 'highCap', highCap, 'gigaCap', gigaCap)
+  
+  
+        
+       // we should only try keys matching our filter 'cap'
+       if (cap == 'Degen Cap'){
+        sortedKeys = Object.keys(degenCap);
+      }
+      else if (cap == 'Low Cap'){
+        sortedKeys = Object.keys(lowCap);
+      }
+      else if (cap == 'Mid Cap'){
+        sortedKeys = Object.keys(midCap);
+      }
+      else if (cap == 'High Cap'){
+        sortedKeys = Object.keys(highCap);
+      }
+      else if (cap == 'Giga Cap'){
+        sortedKeys = Object.keys(gigaCap);
+      }
+      else {
+        sortedKeys = Object.keys(mCaps);
+      }
+
+      // @ts-ignore
 
       // slice top 10% 
-      const topKeys = sortedKeys.slice(Math.floor(goodKeysLen*0.2), Math.floor(goodKeysLen*0.8));
+      const topKeys = sortedKeys
       // take Math.floor(Math.random()*len)
       const key = topKeys[Math.floor(Math.random()*topKeys.length)];
 
@@ -448,6 +551,8 @@ const transaction = new VersionedTransaction(messageV0)
       <DCAButtons onSetLamports={handleSetLamports} />
       x 5 times, once every...
       <FrequencyButtons onSetFrequency={handleSetFrequency} /> 
+      <CapFilterButtons onSetFilter={handleSetCap} />
+
        
         <button onClick={main} className="btn btn-primary">Start</button>  
         <button onClick={() => withdraw(dcaAccounts.map((dcaAccount) => dcaAccount.publicKey))} className="btn btn-primary">Withdraw</button>  

@@ -29,7 +29,7 @@ export const ContentContainer: React.FC<Props> = ({ children }) => {
           </li>
           <li>
           <NavElement
-            label="Referral"
+            label="Swap"
             href="/basics"
           />
           </li>
