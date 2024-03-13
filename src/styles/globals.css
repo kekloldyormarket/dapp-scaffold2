@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-image: radial-gradient(
+    circle farthest-side at 50% 100%,rgba(1, 9, 18, 0),
+    rgba(1, 6, 14, 0.6) 36%,
+    rgba(1, 14, 29, 0.6) 55%,
+    rgba(49, 18, 93, 0.4));
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* example: override wallet button style */
+.wallet-adapter-button:not([disabled]):hover {
+  background-color: #707070;
+}
+
+
+.buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Adjust the space between buttons */
+}
+
+.dca-button {
+  padding: 10px 20px; /* Adjust padding */
+  border: none;
+  border-radius: 5px; /* Adjust border-radius for rounded corners */
+  font-size: 16px; /* Adjust font size */
+  cursor: pointer;
+  transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+/* Example of different styles for different values */
+.dca-value-0-001 { background-color: #e0f2f1; }
+.dca-value-0-01 { background-color: #80cbc4; }
+.dca-value-0-1 { background-color: #4db6ac; }
+.dca-value-0-666 { background-color: #26a69a; }
+.dca-value-1 { background-color: #00897b; }
+.dca-value-2 { background-color: #00695c; }
+.dca-value-5 { background-color: #004d40; }
+
+.dca-button:hover {
+  background-color: #005b4f; /* Change for hover effect */
+}
+
+.dca-button {
+  padding: 10px 20px; /* Adjust padding */
+  border: none;
+  border-radius: 5px; /* Adjust border-radius for rounded corners */
+  font-size: 16px; /* Adjust font size */
+  color: #fff; /* Make the text color white for better contrast */
+  cursor: pointer;
+  transition: background-color 0.3s; /* Smooth background color transition */
+  /* other styles... */
+}
+
+/* Dark button specific styles */
+.dca-button.dark {
+  background-color: #333; /* Dark background */
+  color: #fff; /* Text color for dark buttons */
+}
+
+
+.frequency-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.frequency-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Additional styling for hover effects, etc. */
+.frequency-button:hover {
+  background-color: #007bff; /* Example hover color */
+}
